@@ -10,6 +10,14 @@ setjmp_test.o: setjmp.o
 setjmp_test: setjmp_test.o
 	$(CC) $(CFLAGS) -o setjmp_test setjmp.o setjmp_test.o
 
+confirm_exception: confirm_exception.o
+	$(CXX) $(CXXFLAGS) -o confirm_exception confirm_exception.o
+
+simple: simple.o
+	$(CXX) $(CXXFLAGS) -o simple simple.o
+
 clean:
 	rm -rf *.o
 	rm -rf setjmp_test
+	rm -rf test
+	rm -rf confirm_exception

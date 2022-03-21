@@ -1,2 +1,4 @@
 *.o
 setjmp_test
+confirm_exception
+simple
