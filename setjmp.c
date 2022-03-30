@@ -7,6 +7,8 @@ typedef void *jmp_buf[3];
 __attribute__ ((naked))
 int _longjmp_return(int val, unsigned long cr, void *target_addr) {
     // Simulate the PACStack epilogue of the original _setjmp function
+    // Note that target_addr is also authenticated (the aret of __setjmp)
+    // so a invalid CR (not from the original frame) will fail here
     __asm volatile (
         "mov x30, x2\n"
         "mov x28, x1\n"
