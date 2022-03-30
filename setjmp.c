@@ -31,7 +31,6 @@ void longjmp(jmp_buf env, int val) {
 
     do {
         if (unw_get_reg(&cursor, UNW_REG_SP, &sp) < 0) exit(1);
-        if (sp != (unw_word_t) env[0]) continue;
 
         // PACStack -- verify the call stack while we are attempting longjmp
         // so that we must jump to somewhere *on the call stack*
@@ -39,6 +38,8 @@ void longjmp(jmp_buf env, int val) {
             printf("PACStack error while attempting longjmp, aborting.\n");
             exit(1);
         }
+
+        if (sp != (unw_word_t) env[0]) continue;
 
         // Redirect execution into _longjmp_return
         // This is used to simulate a return from _setjmp
