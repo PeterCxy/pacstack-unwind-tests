@@ -27,11 +27,9 @@ void longjmp(jmp_buf env, int val) {
     struct unw_pacstack_info info;
     unwind_pacstack_init(&info);
 
-    unw_word_t sp, fp;
+    unw_word_t frame_sp, frame_cr;
 
     do {
-        if (unw_get_reg(&cursor, UNW_REG_SP, &sp) < 0) exit(1);
-
         // PACStack -- verify the call stack while we are attempting longjmp
         // so that we must jump to somewhere *on the call stack*
         if (unwind_pacstack_verify_frame(&cursor, &info) != _URC_NO_REASON) {
@@ -39,7 +37,12 @@ void longjmp(jmp_buf env, int val) {
             exit(1);
         }
 
-        if (sp != (unw_word_t) env[0]) continue;
+        if (unw_get_reg(&cursor, UNW_REG_SP, &frame_sp) < 0) exit(1);
+        if (unw_get_reg(&cursor, UNW_ARM64_X28, &frame_cr) < 0) exit(1);
+
+        // Compare __both__ CR and SP
+        // to corrupt our stack pointer, the attacker will have to break CR first
+        if (frame_sp != (unw_word_t) env[0] || frame_cr != (unw_word_t) env[2]) continue;
 
         // Redirect execution into _longjmp_return
         // This is used to simulate a return from _setjmp
