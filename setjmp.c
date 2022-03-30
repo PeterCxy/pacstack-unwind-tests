@@ -73,8 +73,8 @@ int __setjmp(jmp_buf env, unsigned long sp, unsigned long cr) {
     // from the actual stack frame addresses. Use the real sp acquired
     // from the setjmp wrapper here.
     env[0] = (void*) sp;
-    env[1] = __builtin_return_address(0);
-    env[2] = (void*) cr;
+    env[1] = __builtin_return_address(0); // aret of __setjmp
+    env[2] = (void*) cr; // aret of the caller
 
     return 0;
 }
